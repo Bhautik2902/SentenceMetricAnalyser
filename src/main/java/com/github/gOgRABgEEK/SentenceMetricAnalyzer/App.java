@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
@@ -16,9 +18,11 @@ public class App
         
         while (true) {
         	System.out.println();
-        	System.out.println("Sentence Metric Analyzer\n$sma ");
+        	System.out.print("Sentence Metric Analyzer\n$ ");
         	
             String cmd = scn.nextLine();
+            
+            // fetch arguments from the command
             CmdArguments cmdArgs = processCommand(cmd);
             
             if (cmdArgs != null) {
@@ -26,7 +30,7 @@ public class App
             	if (isOkay) {
             		findAvgLength(cmdArgs);
             	}	
-            }     
+            }
         }       
     }
     
@@ -122,7 +126,7 @@ public class App
 	}
 
 	private static boolean processArgs(CmdArguments cmdArgs) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -130,60 +134,64 @@ public class App
     	String[] args = cmd.split("\\s+");
     	CmdArguments cmdAttrb = new CmdArguments();
     	
-    	String pre_flag = "";
     	for (int i=0; i<args.length; i++) {
-    		if (i == 0 && !args[i].equals("sma")) {
+    		
+    		if (i == 0 && (args[i].equals("Exit") || args[i].equals("exit"))) {
+    			System.out.println("Quitting");
+    			return null;
+    		}
+    		else if (i == 0 && !args[i].equals("sma")) {
     			System.out.println(args[i] + ": Command not found.");
     			return null;
     		}
-    		
-    		// flag verifier 
-    		if (i == 1 && (args[1].equals("-f") || args[1].equals("-w") || args[1].equals("-d"))) {
-    			pre_flag = args[1];
-    		}
-    		else if (i == 1 && !(args[1].equals("-f") || args[1].equals("-w") || args[1].equals("-d"))) {
-    			
+    		else if (i == 0 && args[i].equals("sma")) {
+    			continue;
     		}
     		
-//    		switch (args[i]) {
-//	            case "-f":
-//	                flagF = true;
-//	                if (i + 1 < args.length) {
-//	                    fileArg = args[i + 1];
-//	                    i++; // Skip the next argument since it's the file path
-//	                } else {
-//	                    System.out.println("-f flag requires a file argument.");
-//	                    return null;
-//	                }
-//	                break;
-//	            case "-w":
-//	                flagW = true;
-//	                if (i + 1 < args.length) {
-//	                    wordArg = args[i + 1];
-//	                    i++; // Skip the next argument since it's the word
-//	                } else {
-//	                    displayError("-w flag requires a word argument.");
-//	                    return;
-//	                }
-//	                break;
-//	            case "-d":
-//	                flagD = true;
-//	                if (i + 1 < args.length) {
-//	                    directoryArg = args[i + 1];
-//	                    i++; // Skip the next argument since it's the directory path
-//	                } else {
-//	                    displayError("-d flag requires a directory argument.");
-//	                    return;
-//	                }
-//	                break;
-//	            default:
-//	                // Handle other arguments or display an error message
-//	                displayError("Unknown flag or argument: " + args[i]);
-//	                return;
-//    		}
-    		
+    		switch (args[i]) {
+	            case "-f":
+	                if (i + 1 < args.length) {
+	                	cmdAttrb.file_path = args[i + 1];
+	                    i++; // Skip the next argument since it's the file path
+	                } else {
+	                    System.out.println("-f flag requires a file argument.");
+	                    return null;
+	                }
+	                break;
+	            case "-w":
+	                if (i + 1 < args.length) {
+	                	try {
+	                		cmdAttrb.word_len = Byte.parseByte(args[i+1]);
+		                    i++; // Skip the next argument since it's the word
+	                	}
+	                	catch (NumberFormatException ex) {
+	                		System.out.println("Real number is required for word length");
+	                		return null;
+	                	}
+	                	
+	                } else {
+	                	System.out.println("-w flag requires a word length argument.");
+	                    return null;
+	                }
+	                break;
+	            case "-d":
+	                if (i + 1 < args.length) {
+	                    for (char ch :  args[i+1].toCharArray()) {
+	                    	cmdAttrb.deli_list.add(ch);
+	                    }
+	                    i++; // Skip the next argument since it's the directory path
+	                } else {
+	                	System.out.println("-d flag requires a directory argument.");
+	                    return null;
+	                }
+	                break;
+	            default:
+	                // Handle other arguments or display an error message
+	            	System.out.println("Unknown flag or argument: " + args[i]);
+	                return null;
+    		}   		
     	}
-
+    	return cmdAttrb;
     }
     
 }
@@ -191,7 +199,7 @@ public class App
 class CmdArguments {
 	byte word_len;
 	String file_path;
-	List<Character> deli_list;
+	List<Character> deli_list = new ArrayList<Character>();
 	
 	public CmdArguments(byte len, String path, List<Character> list) {
 		this.word_len = len;
