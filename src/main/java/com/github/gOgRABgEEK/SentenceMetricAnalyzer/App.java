@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class App 
 {
@@ -21,6 +22,12 @@ public class App
         	System.out.print("Sentence Metric Analyzer\n$ ");
         	
             String cmd = scn.nextLine();
+            
+            // Quit on exit command
+            if (cmd.contains("Exit") || cmd.contains("exit")) {            	
+            	System.out.println("Quitting");
+            	break;
+            }
             
             // fetch arguments from the command
             CmdArguments cmdArgs = processCommand(cmd);
@@ -43,20 +50,18 @@ public class App
         List<Character> delimiters = cmdArgs.deli_list;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath), customBufferSize)) {
-            String line;
             int charInSen = 0;
             int total_sentence = 0;
             double avgLengthSum = 0;
             
             boolean wordTrueCondition = (cmdArgs.word_len != Integer.MIN_VALUE && !(cmdArgs.word_len < 3));
-            
-           
-            int ch;           
-            while ((ch = reader.read()) != -1) {
+                   
+            char ch;           
+            while ((ch = (char) reader.read()) != (char)-1) {
                 // Process each line as needed 	
                 boolean isAlphaNum = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9' || ch == '\'');
             	HashSet<Character> hs = new HashSet<>();
-            	if (wordTrueCondition && cmdArgs.deli_list != null) {  // both true         		
+            	if (wordTrueCondition && cmdArgs.deli_list.size() != 0) {  // both true         		
             		hs.addAll(cmdArgs.deli_list);
             			                    
             		if (hs.contains(ch)) {  // char is delimiter.
@@ -71,7 +76,7 @@ public class App
             			continue;
             		}
 	            }
-            	else if (wordTrueCondition && cmdArgs.deli_list == null)  {  // true & false
+            	else if (wordTrueCondition && cmdArgs.deli_list.size() == 0)  {  // true & false
             		hs.add('.'); hs.add('?'); hs.add('!');   // default delimiters
             		
             		if (hs.contains(ch)) {  // char is delimiter.
@@ -87,7 +92,7 @@ public class App
             		}
             		
             	}
-            	else if (!wordTrueCondition && cmdArgs.deli_list != null) {   // false & true
+            	else if (!wordTrueCondition && cmdArgs.deli_list.size() != 0) {   // false & true
             		hs.addAll(cmdArgs.deli_list);
             		
             		if (hs.contains(ch)) {  // char is delimiter.
@@ -102,7 +107,7 @@ public class App
             			continue;
             		}
             	}
-            	else if (!wordTrueCondition && cmdArgs.deli_list == null) {   // false & false
+            	else if (!wordTrueCondition && cmdArgs.deli_list.size() == 0) {   // false & false
             		hs.add('.'); hs.add('?'); hs.add('!');   // default delimiters
             		if (hs.contains(ch)) {  // char is delimiter.
             			total_sentence++;
@@ -116,9 +121,15 @@ public class App
             			continue;
             		}
 
-            	}
-                
+            	}      
             }
+            if (total_sentence == 0) {
+            	System.out.println("The file doesn't have any provided delimiters");
+            	return;
+            }
+            String roundedVal = String.format("%.2f", avgLengthSum/total_sentence);
+            System.out.println("Average length of sentence is: " + roundedVal);
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,7 +138,21 @@ public class App
 
 	private static boolean processArgs(CmdArguments cmdArgs) {
 		
-		return false;
+		// file name
+        //String fname_rx = "^(?:(?:[a-zA-Z]:|/[^/]+)?(?:/[\\w.-]+)*)?$";
+        String fname_rx = "([a-zA-Z]:)?(\\\\[a-zA-Z0-9._-]+)+\\\\?";
+
+        Pattern ptn = Pattern.compile("([a-zA-Z]:)?(\\\\[a-zA-Z0-9._-]+)+\\\\?");
+
+        if (cmdArgs.file_path != null && !Pattern.matches(fname_rx, cmdArgs.file_path)) {
+        	System.out.println("File path is not valid.");
+        	return false;
+        }
+		// word length
+		
+		// delimiters 
+		
+		return true;
 	}
 
 	private static CmdArguments processCommand(String cmd) {
@@ -136,11 +161,7 @@ public class App
     	
     	for (int i=0; i<args.length; i++) {
     		
-    		if (i == 0 && (args[i].equals("Exit") || args[i].equals("exit"))) {
-    			System.out.println("Quitting");
-    			return null;
-    		}
-    		else if (i == 0 && !args[i].equals("sma")) {
+    		if (i == 0 && !args[i].equals("sma")) {
     			System.out.println(args[i] + ": Command not found.");
     			return null;
     		}
