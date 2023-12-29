@@ -7,9 +7,6 @@ The Sentence Length Analyzer is a command-line application designed to analyze t
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-
 
 ## Features
 
