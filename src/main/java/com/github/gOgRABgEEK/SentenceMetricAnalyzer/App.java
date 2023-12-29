@@ -2,6 +2,7 @@ package com.github.gOgRABgEEK.SentenceMetricAnalyzer;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -130,8 +131,12 @@ public class App
             String roundedVal = String.format("%.2f", avgLengthSum/total_sentence);
             System.out.println("Average length of sentence is: " + roundedVal);
             
-        } catch (IOException e) {
-            e.printStackTrace();
+        } 
+        catch (FileNotFoundException e) {
+            System.out.println("The specified file could not be found.");
+        }
+        catch (IOException ex) {
+        	System.out.println("Error: " + ex.getMessage());
         }
     	
 	}
@@ -139,10 +144,7 @@ public class App
 	private static boolean processArgs(CmdArguments cmdArgs) {
 		
 		// file name
-        //String fname_rx = "^(?:(?:[a-zA-Z]:|/[^/]+)?(?:/[\\w.-]+)*)?$";
         String fname_rx = "([a-zA-Z]:)?(\\\\[a-zA-Z0-9._-]+)+\\\\?";
-
-        Pattern ptn = Pattern.compile("([a-zA-Z]:)?(\\\\[a-zA-Z0-9._-]+)+\\\\?");
 
         if (cmdArgs.file_path != null && !Pattern.matches(fname_rx, cmdArgs.file_path)) {
         	System.out.println("File path is not valid.");
@@ -150,8 +152,14 @@ public class App
         }
 		// word length
 		
-		// delimiters 
-		
+		// delimiters; verify if those are valid delimiters and not alphanumeric character
+        for (char ch : cmdArgs.deli_list) {    	
+        	boolean isValidDelimiter = !(ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9' || ch == '\'');
+        	if (!isValidDelimiter) {
+        		System.out.println("Invalid delimiter found");
+        		return false;
+        	}
+        }
 		return true;
 	}
 
