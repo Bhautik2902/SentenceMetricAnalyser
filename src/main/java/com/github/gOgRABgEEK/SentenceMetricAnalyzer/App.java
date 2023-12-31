@@ -56,74 +56,80 @@ public class App
             double avgLengthSum = 0;
             
             boolean wordTrueCondition = (cmdArgs.word_len != Integer.MIN_VALUE && !(cmdArgs.word_len < 3));
-                   
-            char ch;           
-            while ((ch = (char) reader.read()) != (char)-1) {
-                // Process each line as needed 	
-                boolean isAlphaNum = (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9' || ch == '\'');
-            	HashSet<Character> hs = new HashSet<>();
-            	if (wordTrueCondition && cmdArgs.deli_list.size() != 0) {  // both true         		
-            		hs.addAll(cmdArgs.deli_list);
-            			                    
-            		if (hs.contains(ch)) {  // char is delimiter.
-            			total_sentence++;
-            			avgLengthSum += (charInSen/cmdArgs.word_len);
-            			charInSen = 0;
-            			continue;
-            		}
-            		
-            		if (isAlphaNum) {   // char is part of the word
-            			charInSen++;
-            			continue;
-            		}
-	            }
-            	else if (wordTrueCondition && cmdArgs.deli_list.size() == 0)  {  // true & false
-            		hs.add('.'); hs.add('?'); hs.add('!');   // default delimiters
-            		
-            		if (hs.contains(ch)) {  // char is delimiter.
-            			total_sentence++;
-            			avgLengthSum += (charInSen/cmdArgs.word_len);
-            			charInSen = 0;
-            			continue;
-            		}
-            		
-            		if (isAlphaNum) {   // char is part of the word
-            			charInSen++;
-            			continue;
-            		}
-            		
-            	}
-            	else if (!wordTrueCondition && cmdArgs.deli_list.size() != 0) {   // false & true
-            		hs.addAll(cmdArgs.deli_list);
-            		
-            		if (hs.contains(ch)) {  // char is delimiter.
-            			total_sentence++;
-            			avgLengthSum += (charInSen/3);  // default word length
-            			charInSen = 0;
-            			continue;
-            		}
-            		
-            		if (isAlphaNum) {   // char is part of the word
-            			charInSen++;
-            			continue;
-            		}
-            	}
-            	else if (!wordTrueCondition && cmdArgs.deli_list.size() == 0) {   // false & false
-            		hs.add('.'); hs.add('?'); hs.add('!');   // default delimiters
-            		if (hs.contains(ch)) {  // char is delimiter.
-            			total_sentence++;
-            			avgLengthSum += (charInSen/3);  // default word length
-            			charInSen = 0;
-            			continue;
-            		}
-            		
-            		if (isAlphaNum) {   // char is part of the word
-            			charInSen++;
-            			continue;
-            		}
+            HashSet<Character> hs = new HashSet<>();
+            
+			if (wordTrueCondition && cmdArgs.deli_list.size() != 0) {  // both true         		
+				char ch;           
+				while ((ch = (char) reader.read()) != (char)-1) { 
+					hs.addAll(cmdArgs.deli_list);
+										
+					if (hs.contains(ch)) {  // char is delimiter.
+						total_sentence++;
+						avgLengthSum += (charInSen/cmdArgs.word_len);
+						charInSen = 0;
+						continue;
+					}
+					
+					if (isCharAlphaNum(ch)) {   // char is part of the word
+						charInSen++;
+						continue;
+					}
+				}
+			}
+			else if (wordTrueCondition && cmdArgs.deli_list.size() == 0)  {  // true & false
+				char ch;           
+				while ((ch = (char) reader.read()) != (char)-1) { 
+					hs.add('.'); hs.add('?'); hs.add('!');   // default delimiters
+				
+					if (hs.contains(ch)) {  // char is delimiter.
+						total_sentence++;
+						avgLengthSum += (charInSen/cmdArgs.word_len);
+						charInSen = 0;
+						continue;
+					}
+					
+					if (isCharAlphaNum(ch)) {   // char is part of the word
+						charInSen++;
+						continue;
+					}
+				}
+			}
+			else if (!wordTrueCondition && cmdArgs.deli_list.size() != 0) {   // false & true
+				char ch;           
+				while ((ch = (char) reader.read()) != (char)-1) { 
+					hs.addAll(cmdArgs.deli_list);
+				
+					if (hs.contains(ch)) {  // char is delimiter.
+						total_sentence++;
+						avgLengthSum += (charInSen/3);  // default word length
+						charInSen = 0;
+						continue;
+					}
+					
+					if (isCharAlphaNum(ch)) {   // char is part of the word
+						charInSen++;
+						continue;
+					}
+				}
+			}
+			else if (!wordTrueCondition && cmdArgs.deli_list.size() == 0) {   // false & false
+				char ch;           
+				while ((ch = (char) reader.read()) != (char)-1) { 
+					hs.add('.'); hs.add('?'); hs.add('!');   // default delimiters
+					if (hs.contains(ch)) {  // char is delimiter.
+						total_sentence++;
+						avgLengthSum += (charInSen/3);  // default word length
+						charInSen = 0;
+						continue;
+					}
+				
+					if ((isCharAlphaNum(ch))) {   // char is part of the word
+						charInSen++;
+						continue;
+					}
+				}
+			}
 
-            	}      
-            }
             if (total_sentence == 0) {
             	System.out.println("The file doesn't have any provided delimiters");
             	return;
@@ -222,20 +228,16 @@ public class App
     	}
     	return cmdAttrb;
     }
-    
+    private static boolean isCharAlphaNum(char ch) {
+		return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9' || ch == '\'');
+	}
 }
 
 class CmdArguments {
 	byte word_len;
 	String file_path;
 	List<Character> deli_list = new ArrayList<Character>();
-	
-	public CmdArguments(byte len, String path, List<Character> list) {
-		this.word_len = len;
-		this.file_path = path;
-		this.deli_list = list;
-	}
-	
+		
 	public CmdArguments() {
 		
 	}	
