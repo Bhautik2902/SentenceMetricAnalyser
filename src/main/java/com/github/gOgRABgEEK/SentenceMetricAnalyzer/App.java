@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
@@ -16,8 +15,7 @@ public class App
 {
     public static void main( String[] args )
     {
-        Scanner scn = new Scanner(System.in);      
-        
+        Scanner scn = new Scanner(System.in);             
         while (true) {
         	System.out.println();
         	System.out.print("Sentence Metric Analyzer\n$ ");
@@ -39,7 +37,8 @@ public class App
             		findAvgLength(cmdArgs);
             	}	
             }
-        }       
+        }  
+		scn.close();     
     }
     
     private static void findAvgLength(CmdArguments cmdArgs) {
@@ -48,14 +47,13 @@ public class App
     	filePath = filePath.replace('/', File.pathSeparatorChar);
     	
         int customBufferSize = 16384; // 16 KB
-        List<Character> delimiters = cmdArgs.deli_list;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath), customBufferSize)) {
             int charInSen = 0;
             int total_sentence = 0;
             double avgLengthSum = 0;
             
-            boolean wordTrueCondition = (cmdArgs.word_len != Integer.MIN_VALUE && !(cmdArgs.word_len < 3));
+            boolean wordTrueCondition = (cmdArgs.word_len != Byte.MIN_VALUE && !(cmdArgs.word_len < 3));
             HashSet<Character> hs = new HashSet<>();
             
 			if (wordTrueCondition && cmdArgs.deli_list.size() != 0) {  // both true         		
@@ -156,7 +154,12 @@ public class App
         	System.out.println("File path is not valid.");
         	return false;
         }
+
 		// word length
+		if (cmdArgs.word_len >= 15) {
+			System.out.println("The maximum word limit allowed is 15");
+			return false;
+		}
 		
 		// delimiters; verify if those are valid delimiters and not alphanumeric character
         for (char ch : cmdArgs.deli_list) {    	
@@ -239,6 +242,6 @@ class CmdArguments {
 	List<Character> deli_list = new ArrayList<Character>();
 		
 	public CmdArguments() {
-		
+		word_len = Byte.MIN_VALUE;
 	}	
 }
