@@ -241,6 +241,7 @@ class CmdArguments {
 	String file_path;
 	List<Character> deli_list = new ArrayList<Character>();
 		
+		
 	public CmdArguments() {
 		word_len = Byte.MIN_VALUE;
 	}	
