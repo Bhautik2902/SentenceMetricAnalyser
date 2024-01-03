@@ -13,9 +13,16 @@ import java.util.regex.Pattern;
 
 public class App 
 {
+	static Scanner scn = new Scanner(System.in);
+	static List<Character> defaultDelis = new ArrayList<>();
+
     public static void main( String[] args )
     {
-        Scanner scn = new Scanner(System.in);             
+		// adding default delimiters to list.
+		defaultDelis.add('.');
+		defaultDelis.add('?');
+		defaultDelis.add('!');
+                    
         while (true) {
         	System.out.println();
         	System.out.print("Sentence Metric Analyzer\n$ ");
@@ -55,8 +62,42 @@ public class App
             
             boolean wordTrueCondition = (cmdArgs.word_len != Byte.MIN_VALUE && !(cmdArgs.word_len < 3));
             HashSet<Character> hs = new HashSet<>();
-            
-			if (wordTrueCondition && cmdArgs.deli_list.size() != 0) {  // both true         		
+
+			// for -a flag
+			if (cmdArgs.actualWord) {
+				if (wordTrueCondition) {
+					System.out.println("Two options found for word size choice. Choose any one.");
+					return;
+				}
+				List<Character> currList;
+				if (cmdArgs.deli_list.size() != 0) { 
+					currList = cmdArgs.deli_list;
+				}
+				else {
+					currList = defaultDelis;
+				}
+
+				int spaceCount = 0; 
+				char ch;
+				while ((ch = (char) reader.read()) != (char)-1) { 
+					hs.addAll(currList);
+										
+					if (hs.contains(ch)) {  // char is delimiter.
+						total_sentence++;
+						avgLengthSum += (spaceCount+1);  // no. of words will be total spaces in sentence + 1.
+						spaceCount = 0;
+						continue;
+					}
+					
+					if (ch == ' ') {   // char is part of the word
+						spaceCount++;
+						continue;
+					}
+				}
+			}
+
+            // for -w and -d flag
+			else if (wordTrueCondition && cmdArgs.deli_list.size() != 0) {  // both true         		
 				char ch;           
 				while ((ch = (char) reader.read()) != (char)-1) { 
 					hs.addAll(cmdArgs.deli_list);
@@ -77,7 +118,7 @@ public class App
 			else if (wordTrueCondition && cmdArgs.deli_list.size() == 0)  {  // true & false
 				char ch;           
 				while ((ch = (char) reader.read()) != (char)-1) { 
-					hs.add('.'); hs.add('?'); hs.add('!');   // default delimiters
+					hs.addAll(defaultDelis);   // default delimiters
 				
 					if (hs.contains(ch)) {  // char is delimiter.
 						total_sentence++;
@@ -113,7 +154,7 @@ public class App
 			else if (!wordTrueCondition && cmdArgs.deli_list.size() == 0) {   // false & false
 				char ch;           
 				while ((ch = (char) reader.read()) != (char)-1) { 
-					hs.add('.'); hs.add('?'); hs.add('!');   // default delimiters
+					hs.addAll(defaultDelis);   // default delimiters
 					if (hs.contains(ch)) {  // char is delimiter.
 						total_sentence++;
 						avgLengthSum += (charInSen/3);  // default word length
@@ -149,8 +190,12 @@ public class App
 		
 		// file name
         String fname_rx = "([a-zA-Z]:)?(\\\\[a-zA-Z0-9._-]+)+\\\\?";
+		if (cmdArgs.file_path == null) {
+			System.out.println("File path is required");
+			return false;
+		}
 
-        if (cmdArgs.file_path != null && !Pattern.matches(fname_rx, cmdArgs.file_path)) {
+        if (!Pattern.matches(fname_rx, cmdArgs.file_path)) {
         	System.out.println("File path is not valid.");
         	return false;
         }
@@ -223,6 +268,9 @@ public class App
 	                    return null;
 	                }
 	                break;
+				case "-a":
+					cmdAttrb.actualWord = true;
+					break;
 	            default:
 	                // Handle other arguments or display an error message
 	            	System.out.println("Unknown flag or argument: " + args[i]);
@@ -239,10 +287,12 @@ public class App
 class CmdArguments {
 	byte word_len;
 	String file_path;
+	boolean actualWord;
 	List<Character> deli_list = new ArrayList<Character>();
 		
 		
 	public CmdArguments() {
 		word_len = Byte.MIN_VALUE;
+		actualWord = false;
 	}	
 }
