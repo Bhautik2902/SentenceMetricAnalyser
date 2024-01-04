@@ -199,6 +199,10 @@ public class App
         	System.out.println("File path is not valid.");
         	return false;
         }
+		if (!cmdArgs.file_path.contains(".txt")) {
+			System.out.println("Only text(.txt) files are accepted");
+			return false;
+		}
 
 		// word length
 		if (cmdArgs.word_len >= 15) {
