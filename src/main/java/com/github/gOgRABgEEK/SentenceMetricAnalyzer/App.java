@@ -232,6 +232,10 @@ public class App
     			return null;
     		}
     		else if (i == 0 && args[i].equals("sma")) {
+				if (args.length == 1) {
+					printCmdDescription();
+					return null;
+				}
     			continue;
     		}
     		
@@ -252,7 +256,7 @@ public class App
 		                    i++; // Skip the next argument since it's the word
 	                	}
 	                	catch (NumberFormatException ex) {
-	                		System.out.println("Real number is required for word length");
+	                		System.out.println("Non fractional value is required for word length");
 	                		return null;
 	                	}
 	                	
@@ -277,7 +281,7 @@ public class App
 					break;
 	            default:
 	                // Handle other arguments or display an error message
-	            	System.out.println("Unknown flag or argument: " + args[i]);
+	            	System.out.println("Unknown option or argument: " + args[i]);
 	                return null;
     		}   		
     	}
@@ -285,6 +289,45 @@ public class App
     }
     private static boolean isCharAlphaNum(char ch) {
 		return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9' || ch == '\'');
+	}
+
+	private static void printCmdDescription() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Usage: ");
+		sb.append("sma [options] [args...]");
+		sb.append("\n");
+		sb.append("    or  Exit");
+		sb.append("\n\n");
+		sb.append("The options include:");
+		sb.append("\n\n\t");
+
+		sb.append("-f <To provide the file path>");
+		sb.append("\n\t\t");
+		sb.append("[The static file path with file name and extention goes as the argument]");
+
+		sb.append("\n\n\t");
+
+		sb.append("-w <To specify the word length>");
+		sb.append("\n\t\t");
+		sb.append("[Integer number to define the word length]");
+
+		sb.append("\n\n\t");
+
+		sb.append("-a <To consider the actual word in the text file.>");
+		sb.append("\n\t\t");
+		sb.append("[No argument required for this option.]");
+
+		sb.append("\n\n\t");
+
+		sb.append("-d <To specify delimeters which defines the end of the sentence>");
+		sb.append("\n\t\t");
+		sb.append("[String of consicutive delimiter characters]");
+
+		sb.append("\n\n");
+		sb.append("Note: -w and -a both do not work togather");
+		
+		System.out.println(sb.toString());
 	}
 }
 
