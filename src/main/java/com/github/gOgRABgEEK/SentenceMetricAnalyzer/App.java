@@ -285,6 +285,9 @@ public class App
 				case "-a":
 					cmdAttrb.actualWord = true;
 					break;
+				case "-h":
+					printCmdDescription();
+					return null;
 	            default:
 	                // Handle other arguments or display an error message
 	            	System.out.println("Unknown option or argument: " + args[i]);
@@ -329,6 +332,9 @@ public class App
 		sb.append("-d <To specify delimeters which defines the end of the sentence>");
 		sb.append("\n\t\t");
 		sb.append("[String of consicutive delimiter characters]");
+		
+		sb.append("\n\n\t");
+		sb.append("-h <To show the command description and usage>");
 
 		sb.append("\n\n");
 		sb.append("Note: -w and -a both do not work togather");
