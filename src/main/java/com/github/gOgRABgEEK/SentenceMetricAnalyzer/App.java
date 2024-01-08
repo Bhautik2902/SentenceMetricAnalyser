@@ -27,8 +27,7 @@ public class App
 		defaultDelis.add('!');
                     
         while (true) {
-        	System.out.println();
-        	System.out.print("Sentence Metric Analyzer\n$ ");
+        	System.out.print("\nSentence Metric Analyzer\n$ ");
         	
             String cmd = scn.nextLine();
             
@@ -69,7 +68,7 @@ public class App
 			// for -a flag
 			if (cmdArgs.actualWord) {
 				if (wordTrueCondition) {
-					System.out.println("Two options found for word size choice. Choose any one.");
+					printOnConsole("Usage", "Two options found for word size choice. Choose any one.");
 					return;
 				}
 				List<Character> currList;
@@ -173,18 +172,18 @@ public class App
 			}
 
             if (total_sentence == 0) {
-            	System.out.println("The file doesn't have any provided delimiters");
+				printOnConsole("Usage", "The file doesn't have any provided delimiters");
             	return;
             }
             String roundedVal = String.format("%.2f", avgLengthSum/total_sentence);
             System.out.println("Average length of sentence is: " + roundedVal);
-            
+			printOnConsole("Output", "Average length of sentence is: " + roundedVal);      
         } 
         catch (FileNotFoundException e) {
-            System.out.println("The specified file could not be found.");
+			printOnConsole("Error", "The specified file could not be found.");      
         }
         catch (IOException ex) {
-        	System.out.println("Error: " + ex.getMessage());
+        	printOnConsole("Error", ex.getMessage());
         }
     	
 	}
@@ -192,27 +191,27 @@ public class App
 	private static boolean processArgs(CmdArguments cmdArgs) {
 		
 		// file name
-        String fname_rx = "([a-zA-Z]:)?(\\\\[a-zA-Z0-9._-]+)+\\\\?";
+        //String fname_rx = "([a-zA-Z]:)?(\\\\[a-zA-Z0-9._-]+)+\\\\?";
         
 		if (cmdArgs.file_path == null) {
-			System.out.println("File path is required");
+			printOnConsole("Error", "File path is required");
 			return false;
 		}
 
         Path normalizedPath = Paths.get(cmdArgs.file_path).normalize();
         
         if (!Files.exists(normalizedPath)) {
-        	System.out.println("File path is not valid.");
+			printOnConsole("Error", "File path is not valid");
         	return false;
         }
 		if (!cmdArgs.file_path.contains(".txt")) {
-			System.out.println("Only text(.txt) files are accepted");
+			printOnConsole("Error", "Only text(.txt) files are accepted");
 			return false;
 		}
 
 		// word length
 		if (cmdArgs.word_len >= 15) {
-			System.out.println("The maximum word limit allowed is 15");
+			printOnConsole("Usage", "The maximum word limit allowed is 15");			
 			return false;
 		}
 		
@@ -220,7 +219,7 @@ public class App
         for (char ch : cmdArgs.deli_list) {    	
         	boolean isValidDelimiter = !(ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9' || ch == '\'');
         	if (!isValidDelimiter) {
-        		System.out.println("Invalid delimiter found");
+				printOnConsole("Error", "Invalid delimiter found");		
         		return false;
         	}
         }
@@ -234,7 +233,7 @@ public class App
     	for (int i=0; i<args.length; i++) {
     		
     		if (i == 0 && !args[i].equals("sma")) {
-    			System.out.println(args[i] + ": Command not found.");
+				printOnConsole("Error", "\'args[i]\' " + "Command not found.");		
     			return null;
     		}
     		else if (i == 0 && args[i].equals("sma")) {
@@ -252,7 +251,7 @@ public class App
 	                	cmdAttrb.file_path = filePath.toString();
 	                    i++; // Skip the next argument since it's the file path
 	                } else {
-	                    System.out.println("-f flag requires a file argument.");
+						printOnConsole("Error", "-f flag requires a file argument.");		
 	                    return null;
 	                }
 	                break;
@@ -263,12 +262,12 @@ public class App
 		                    i++; // Skip the next argument since it's the word
 	                	}
 	                	catch (NumberFormatException ex) {
-	                		System.out.println("Non fractional value is required for word length");
+							printOnConsole("Error", "Non fractional value is required for word length");		
 	                		return null;
 	                	}
 	                	
 	                } else {
-	                	System.out.println("-w flag requires a word length argument.");
+						printOnConsole("Error", "-w flag requires a word length argument.");		
 	                    return null;
 	                }
 	                break;
@@ -279,7 +278,7 @@ public class App
 	                    }
 	                    i++; // Skip the next argument since it's the directory path
 	                } else {
-	                	System.out.println("-d flag requires a directory argument.");
+						printOnConsole("Error", "-d flag requires a directory argument.");		
 	                    return null;
 	                }
 	                break;
@@ -335,6 +334,10 @@ public class App
 		sb.append("Note: -w and -a both do not work togather");
 		
 		System.out.println(sb.toString());
+	}
+
+	public static void printOnConsole(String label, String msg) {
+		System.out.println(label + ": " + msg);
 	}
 }
 
