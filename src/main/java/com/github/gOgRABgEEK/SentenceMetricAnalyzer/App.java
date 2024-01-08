@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,12 +53,12 @@ public class App
     
     private static void findAvgLength(CmdArguments cmdArgs) {
     	// read files from file path.
-    	String filePath = cmdArgs.file_path;
-    	filePath = filePath.replace('/', File.pathSeparatorChar);
+    	
+    	Path filePath = Paths.get(cmdArgs.file_path);
     	
         int customBufferSize = 16384; // 16 KB
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath), customBufferSize)) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath.toString()), customBufferSize)) {
             int charInSen = 0;
             int total_sentence = 0;
             double avgLengthSum = 0;
@@ -190,12 +193,15 @@ public class App
 		
 		// file name
         String fname_rx = "([a-zA-Z]:)?(\\\\[a-zA-Z0-9._-]+)+\\\\?";
+        
 		if (cmdArgs.file_path == null) {
 			System.out.println("File path is required");
 			return false;
 		}
 
-        if (!Pattern.matches(fname_rx, cmdArgs.file_path)) {
+        Path normalizedPath = Paths.get(cmdArgs.file_path).normalize();
+        
+        if (!Files.exists(normalizedPath)) {
         	System.out.println("File path is not valid.");
         	return false;
         }
@@ -242,7 +248,8 @@ public class App
     		switch (args[i]) {
 	            case "-f":
 	                if (i + 1 < args.length) {
-	                	cmdAttrb.file_path = args[i + 1];
+	                	Path filePath = Paths.get(args[i + 1]);	                	
+	                	cmdAttrb.file_path = filePath.toString();
 	                    i++; // Skip the next argument since it's the file path
 	                } else {
 	                    System.out.println("-f flag requires a file argument.");
