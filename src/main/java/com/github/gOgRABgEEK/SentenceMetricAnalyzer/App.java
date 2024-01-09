@@ -176,7 +176,7 @@ public class App
             	return;
             }
             String roundedVal = String.format("%.2f", avgLengthSum/total_sentence);
-            System.out.println("Average length of sentence is: " + roundedVal);
+
 			printOnConsole("Output", "Average length of sentence is: " + roundedVal);      
         } 
         catch (FileNotFoundException e) {
