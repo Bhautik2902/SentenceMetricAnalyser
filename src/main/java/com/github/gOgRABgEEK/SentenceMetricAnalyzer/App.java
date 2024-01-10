@@ -233,7 +233,7 @@ public class App
     	for (int i=0; i<args.length; i++) {
     		
     		if (i == 0 && !args[i].equals("sma")) {
-				printOnConsole("Error", "\'args[i]\' " + "Command not found.");		
+				printOnConsole("Error", "\'" + args[i] + "\'" + " Command not found.");		
     			return null;
     		}
     		else if (i == 0 && args[i].equals("sma")) {
