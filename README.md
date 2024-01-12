@@ -5,7 +5,7 @@ The Sentence Length Analyzer is a command-line application designed to analyze t
 
 ## Table of Contents
 - [Features](#features)
-- [Installation](#installation)
+- [Download](#download)
 - [Usage](#usage)
 
 ## Features
@@ -16,9 +16,9 @@ The Sentence Length Analyzer is a command-line application designed to analyze t
 
 - **Customizable Output:** The output is a real number which represents the average sentence length in the provided document rounded to two decimal digits.
 
-## Installation
+## Download
 
-To install and use the Sentence Length Analyzer, follow the instructions in the [Installation](#installation) section. Please make sure that the necessary dependencies are met, and the application is set up correctly.
+The .exe file of the file can be downloaded from <a href="https://github.com/gOgRABgEEK/SentenceMetricAnalyser/releases/tag/v1.0.0"> here</a>. Download the .exe file and the application is ready to be used. You can ignore the warnings from windows.
 
 ## Usage
 
