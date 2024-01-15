@@ -28,6 +28,8 @@ This command-line application is fairly easy and similar to any other CLI. There
   
 - **-d:**  This flag allows the user to provide delimiters which define the end of the sentence. The sequence of delimiter characters is expected as an argument [ e.g. -d .?!; ]. In this scenario '.', '?', '!', and ';' will mark the end of the sentence. If this flag is not provided, by default '.', '?' and '!' will be considered.
 
+- - **-h:**  Shows the description and usage of the command.
+
 - **-w:** This flag provides a way to set the word length meaning how many characters the user found suitable which make a word. The Integer is expected as an argument. In case this flag is not included in the command, by default word length is 3.
 
 - **-a:** This flag provides a way to consider the actual word. The Integer is expected as an argument.
